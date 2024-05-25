@@ -1,13 +1,19 @@
 final class MakeCfg {
   final String appName;
+
   /// Command to run before build.
   final String? beforeBuild;
+
   /// Command to run after build.
   final String? afterBuild;
   final String buildDataClass;
   final String buildDataPath;
+
   /// Custom arguments for each build type.
   final Map<String, List<String>> customArgs;
+
+  /// Cmds that runs before [flutterBuild]
+  final Map<String, String> platformSetup;
 
   MakeCfg({
     required this.appName,
@@ -16,6 +22,7 @@ final class MakeCfg {
     required this.buildDataClass,
     required this.buildDataPath,
     required this.customArgs,
+    required this.platformSetup,
   });
 
   factory MakeCfg.fromJson(Map<String, dynamic> json) {
@@ -28,8 +35,13 @@ final class MakeCfg {
         buildDataPath:
             json['buildDataPath'] as String? ?? 'lib/data/res/build_data.dart',
         customArgs: (json['customArgs'] as Map<String, dynamic>?)?.map(
-          (key, value) => MapEntry(key, (value as List).cast<String>()),
-        ) ?? {},
+              (key, value) => MapEntry(key, (value as List).cast<String>()),
+            ) ??
+            {},
+        platformSetup: (json['platformSetup'] as Map<String, dynamic>?)?.map(
+              (key, value) => MapEntry(key, value as String),
+            ) ??
+            {},
       );
     } catch (e) {
       throw ArgumentError('Invalid config: $e');

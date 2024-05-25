@@ -83,6 +83,7 @@ Future<void> installLinuxEnv() async {
 
   final result = await Process.run('which', ['appimagetool']);
   if (result.exitCode != 0) {
+    print('appimagetool is not installed. Installing...');
     const url = 'https://github.com/AppImage/appimagetool/releases/download/'
         'continuous/appimagetool-x86_64.AppImage';
     final dl = await Process.run(
@@ -103,6 +104,7 @@ Future<void> installLinuxEnv() async {
     }
   }
 
+  print('Installing dependencies...');
   const deps = 'clang cmake ninja-build pkg-config libgtk-3-dev '
       'libvulkan-dev desktop-file-utils';
   final apts = await Process.run(

@@ -9,6 +9,19 @@ late final MakeCfg makeCfg;
 String get appName => makeCfg.appName;
 
 Future<void> flutterBuild(String buildType, {List<String>? customArgs}) async {
+  final setup = makeCfg.platformSetup.entries
+      .firstWhereOrNull((e) => e.key == buildType)
+      ?.value;
+  if (setup != null) {
+    print('Running platformSetup...');
+    final result = await Process.run('sh', ['-c', setup]);
+    print(result.stdout);
+    if (result.exitCode != 0) {
+      print(result.stderr);
+      exit(1);
+    }
+  }
+  
   final makeCfgArgs = makeCfg.customArgs.entries
       .firstWhereOrNull((e) => e.key == buildType)
       ?.value;
