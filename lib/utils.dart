@@ -80,14 +80,30 @@ Future<int> getGitModificationCount() async {
       .length;
 }
 
-Future<void> installAppImageTool() async {
+Future<void> installLinuxEnv() async {
   if (!Platform.isLinux) return;
-  final result = await Process.run('which', ['appimagetool']);
-  if (result.exitCode == 0) return;
 
-  const url = 'https://github.com/AppImage/appimagetool/releases/download/'
-      'continuous/appimagetool-x86_64.AppImage';
-  print('Downloading appimagetool...');
-  await Process.run('wget', ['-O', 'appimagetool', url]);
-  await Process.run('chmod', ['+x', 'appimagetool']);
+  final result = await Process.run('which', ['appimagetool']);
+  if (result.exitCode != 0) {
+    const url = 'https://github.com/AppImage/appimagetool/releases/download/'
+        'continuous/appimagetool-x86_64.AppImage';
+    print('Downloading appimagetool...');
+    await Process.run('wget', ['-O', 'appimagetool', url]);
+    await Process.run('chmod', ['+x', 'appimagetool']);
+  }
+
+  const aptLibs = [
+    'clang',
+    'cmake',
+    'ninja-build',
+    'pkg-config',
+    'libgtk-3-dev'
+  ];
+  for (final item in aptLibs) {
+    final result = await Process.run('dpkg', ['-l', item]);
+    if (result.exitCode != 0) {
+      print('Installing $item...');
+      await Process.run('sudo', ['apt', 'install', item, '-y']);
+    }
+  }
 }

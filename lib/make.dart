@@ -88,7 +88,7 @@ Categories=Utility;
 
 Future<void> flutterBuildLinux() async {
   await setupLinuxDir();
-  await installAppImageTool();
+  await installLinuxEnv();
   await flutterBuild('linux');
   // cp -r build/linux/x64/release/bundle/* appName.AppDir
   await Process.run('cp', [
