@@ -58,22 +58,27 @@ Future<void> flutterBuildAndroid() async {
 
 Future<void> setupLinuxDir() async {
   await Directory(LINUX_APP_DIR).create();
+
   // cp -r assets/app_icon.png linux.AppDir
-  await Process.run('cp', [
-    '-r',
-    './assets/app_icon.png',
-    LINUX_APP_DIR,
-  ]);
+  const appIconPath = 'assets/app_icon.png';
+  if (!await File(appIconPath).exists()) {
+    print('No app_icon.png found in assets.');
+    exit(1);
+  }
+  await Process.run('cp', ['-r', appIconPath, LINUX_APP_DIR]);
+
   // Create AppRun
   final appRun = '''
 #!/bin/sh
 cd "\$(dirname "\$0")"
 exec ./$appName
 ''';
-  const appRunName = '$LINUX_APP_DIR/AppRun';
-  await File(appRunName).writeAsString(appRun);
+  const appRunPath = '$LINUX_APP_DIR/AppRun';
+  await File(appRunPath).writeAsString(appRun);
+
   // chmod +x AppRun
-  await Process.run('chmod', ['+x', appRunName]);
+  await Process.run('chmod', ['+x', appRunPath]);
+
   // Create .desktop
   final desktop = '''
 [Desktop Entry]
@@ -97,7 +102,16 @@ Future<void> flutterBuildLinux() async {
     LINUX_APP_DIR,
   ]);
   // Run appimagetool
-  await Process.run('sh', ['-c', 'ARCH=x86_64 ./appimagetool $LINUX_APP_DIR']);
+  final appimg = await Process.run(
+    'appimagetool',
+    [LINUX_APP_DIR],
+    environment: {'ARCH': 'x86_64'},
+  );
+  if (appimg.exitCode != 0) {
+    print(appimg.stdout);
+    print(appimg.stderr);
+    exit(appimg.exitCode);
+  }
   await File('$appName-x86_64.AppImage').rename('${appName}_amd64.AppImage');
 }
 
