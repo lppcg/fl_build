@@ -30,7 +30,7 @@ void main(List<String> args) async {
     }
   }
 
-  final file = File(params['-c'] ?? params['--make-config'] ?? 'make.json');
+  final file = File(params['-c'] ?? params['--fl-build-config'] ?? 'fl_build.json');
   if (await file.exists()) {
     final content = await file.readAsString();
     final config = json.decode(content) as Map<String, dynamic>;
@@ -39,6 +39,8 @@ void main(List<String> args) async {
     print('Make config is required: ${file.path}');
     exit(1);
   }
+
+  await writeGithubEnv();
 
   final beforeBuild = makeCfg.beforeBuild;
   if (beforeBuild != null) {
