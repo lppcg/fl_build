@@ -17,12 +17,17 @@ extension IterX<T> on Iterable<T> {
 
 Future<void> updateBuildData() async {
   print('Updating BuildData...');
-  final moreData = await File(MORE_BUILD_DATA_PATH).readAsString();
-  final commentRemoved = moreData.split('\n').where((line) {
-    final trimmed = line.trim();
-    return !trimmed.startsWith('//');
-  }).join('\n');
-  final moreJson = json.decode(commentRemoved) as Map<String, dynamic>;
+
+  final moreJson = await () async {
+    final file = File(MORE_BUILD_DATA_PATH);
+    if (!await file.exists()) return <String, dynamic>{};
+    final moreData = await file.readAsString();
+    final commentRemoved = moreData.split('\n').where((line) {
+      final trimmed = line.trim();
+      return !trimmed.startsWith('//');
+    }).join('\n');
+    return json.decode(commentRemoved) as Map<String, dynamic>;
+  }();
   final data = {
     'name': appName,
     'build': COMMIT_COUNT,
