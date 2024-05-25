@@ -16,8 +16,6 @@ extension IterX<T> on Iterable<T> {
 }
 
 Future<void> updateBuildData() async {
-  print('Updating BuildData...');
-
   final moreJson = await () async {
     final file = File(MORE_BUILD_DATA_PATH);
     if (!await file.exists()) return <String, dynamic>{};
@@ -104,15 +102,28 @@ Future<void> installLinuxEnv() async {
       exit(1);
     }
   }
+
+  const deps = 'clang cmake ninja-build pkg-config libgtk-3-dev '
+      'libvulkan-dev desktop-file-utils';
+  final apts = await Process.run(
+    'sudo',
+    ['apt', 'install', '-y', ...deps.split(' ')],
+  );
+  if (apts.exitCode != 0) {
+    print(apts.stderr);
+    exit(1);
+  }
 }
 
-Future<void> writeGithubEnv() async {
+Future<void> setupGithub() async {
   final envFile = Platform.environment['GITHUB_ENV'];
   if (envFile == null) {
     print('GITHUB_ENV is not set. Skip writing env.');
     return;
   }
-  
+
+  await installLinuxEnv();
+
   final env = StringBuffer();
   env.writeln('APP_NAME=$appName');
   env.writeln('BUILD_NUMBER=$COMMIT_COUNT');

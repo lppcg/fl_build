@@ -40,7 +40,7 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  await writeGithubEnv();
+  await setupGithub();
 
   final beforeBuild = makeCfg.beforeBuild;
   if (beforeBuild != null) {
