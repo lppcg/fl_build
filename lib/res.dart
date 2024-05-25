@@ -4,11 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 final COMMIT_COUNT = () {
-  final result = Process.runSync('git', ['log', '--format=format:%h']);
-  return (result.stdout as String)
-      .split('\n')
-      .where((line) => line.isNotEmpty)
-      .length;
+  final result = Process.runSync('git', ['rev-list', '--count', 'HEAD']);
+  return int.tryParse(result.stdout.toString().trim()) ?? 0;
 }();
 
 const MORE_BUILD_DATA_PATH = 'more_build_data.json';
