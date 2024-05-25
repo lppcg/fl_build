@@ -45,9 +45,9 @@ Future<void> flutterBuildAndroid() async {
 
   // {originName: newName}
   final namesMap = {
-    'app-arm64-v8a-release.apk': '$appName-arm64.apk',
-    'app-armeabi-v7a-release.apk': '$appName-arm.apk',
-    'app-x86_64-release.apk': '$appName-amd64.apk',
+    'app-arm64-v8a-release.apk': '${appName}_arm64.apk',
+    'app-armeabi-v7a-release.apk': '${appName}_arm.apk',
+    'app-x86_64-release.apk': '${appName}_amd64.apk',
   };
   for (final entry in namesMap.entries) {
     final origin = entry.key;
@@ -98,10 +98,12 @@ Future<void> flutterBuildLinux() async {
   ]);
   // Run appimagetool
   await Process.run('sh', ['-c', 'ARCH=x86_64 ./appimagetool $LINUX_APP_DIR']);
+  await File('$appName-x86_64.AppImage').rename('${appName}_amd64.AppImage');
 }
 
 Future<void> flutterBuildWin() async {
   await flutterBuild('windows');
+  // TODO: Zip build output dir to ./${appName}_amd64.zip
 }
 
 Future<void> changeAppleVersion() async {
@@ -120,7 +122,6 @@ Future<void> changeAppleVersion() async {
 const BUILD_FUNCS = {
   'ios': flutterBuildIOS,
   'android': flutterBuildAndroid,
-  'apk': flutterBuildAndroid,
   'mac': flutterBuildMacOS,
   'linux': flutterBuildLinux,
   'win': flutterBuildWin,
