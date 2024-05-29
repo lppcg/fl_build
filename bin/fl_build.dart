@@ -6,6 +6,8 @@ import 'dart:io';
 
 import 'package:fl_build/config.dart';
 import 'package:fl_build/make.dart';
+import 'package:fl_build/scp.dart';
+import 'package:fl_build/target.dart';
 import 'package:fl_build/utils.dart';
 
 void main(List<String> args) async {
@@ -30,7 +32,8 @@ void main(List<String> args) async {
     }
   }
 
-  final file = File(params['-c'] ?? params['--fl-build-config'] ?? 'fl_build.json');
+  final file =
+      File(params['-c'] ?? params['--fl-build-config'] ?? 'fl_build.json');
   if (await file.exists()) {
     final content = await file.readAsString();
     final config = json.decode(content) as Map<String, dynamic>;
@@ -59,17 +62,19 @@ void main(List<String> args) async {
   await updateBuildData();
 
   final platforms = params['-p']?.split(',');
+  final scp = params.containsKey('-s') || params.containsKey('--scp');
+
   if (platforms == null) {
     print('No platform specified. Exit.');
     return;
   }
   for (final platform in platforms) {
-    final func = BUILD_FUNCS[platform];
-    if (func == null) {
-      print('Invalid platform: $platform');
-      continue;
+    final target = Target.fromString(platform);
+    final res = await Maker.run(target);
+    if (res == null) continue;
+    for (final path in res.pkgPath) {
+      if (scp) await Scps.run(target, path);
     }
-    await func();
   }
 
   final afterBuild = makeCfg.afterBuild;

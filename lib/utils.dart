@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fl_build/make.dart';
+import 'package:fl_build/config.dart';
 import 'package:fl_build/res.dart';
 
 extension IterX<T> on Iterable<T> {
@@ -49,6 +49,18 @@ Future<void> updateBuildData() async {
   await File(makeCfg.buildDataPath).writeAsString(buffer.toString());
 }
 
+Future<void> changeAppleVersion() async {
+  for (final path in ['ios', 'macos']) {
+    final file = File('$path/$XCODE_CFG_PATH');
+    final contents = await file.readAsString();
+    final newContents = contents
+        .replaceAll(
+            REG_APPLE_MARKET_VER, 'MARKETING_VERSION = 1.0.$COMMIT_COUNT;')
+        .replaceAll(REG_APPLE_VER, 'CURRENT_PROJECT_VERSION = $COMMIT_COUNT;');
+    await file.writeAsString(newContents);
+  }
+}
+
 Future<void> dartFormat() async {
   final result = await Process.run('dart', ['format', '.']);
   print(result.stdout);
@@ -76,6 +88,41 @@ Future<int> getGitModificationCount() async {
       .split('\n')
       .where((line) => line.isNotEmpty)
       .length;
+}
+
+Future<void> setupLinuxDir() async {
+  await Directory(LINUX_APP_DIR).create();
+
+  // cp -r assets/app_icon.png linux.AppDir
+  const appIconPath = 'assets/app_icon.png';
+  if (!await File(appIconPath).exists()) {
+    print('No app_icon.png found in assets.');
+    exit(1);
+  }
+  await Process.run('cp', ['-r', appIconPath, LINUX_APP_DIR]);
+
+  // Create AppRun
+  final appRun = '''
+#!/bin/sh
+cd "\$(dirname "\$0")"
+exec ./$appName
+''';
+  const appRunPath = '$LINUX_APP_DIR/AppRun';
+  await File(appRunPath).writeAsString(appRun);
+
+  // chmod +x AppRun
+  await Process.run('chmod', ['+x', appRunPath]);
+
+  // Create .desktop
+  final desktop = '''
+[Desktop Entry]
+Name=$appName
+Exec=$appName
+Icon=app_icon
+Type=Application
+Categories=Utility;
+''';
+  await File('$LINUX_APP_DIR/default.desktop').writeAsString(desktop);
 }
 
 Future<void> installLinuxEnv() async {

@@ -1,3 +1,8 @@
+late final MakeCfg makeCfg;
+
+String get appName => makeCfg.appName;
+String get appNameLower => appName.toLowerCase();
+
 final class MakeCfg {
   final String appName;
 
