@@ -60,7 +60,7 @@ abstract final class Maker {
 
     print('\n[$buildType]\nflutter ${args.join(' ')}');
 
-    final buildResult = await Process.run('flutter', args);
+    final buildResult = await Process.run('flutter', args, runInShell: true);
     final exitCode = buildResult.exitCode;
     if (exitCode != 0) {
       print(buildResult.stdout);
@@ -126,8 +126,28 @@ abstract final class Maker {
 
   static Future<MakeResult?> flutterBuildWin() async {
     await _flutterBuild('windows');
-    // TODO: Zip build output dir to ./${appName}_${COMMIT_COUNT}_amd64.zip
 
-    return MakeResult(pkgPath: []);
+    final pkgPath = '${appName}_${COMMIT_COUNT}_amd64.zip';
+    final buildPath = 'build\\windows\\x64\\runner\\Release\\*';
+
+    print("Creating zip archive to $pkgPath ...");
+
+    final result = await Process.run('powershell', [
+      'Compress-Archive',
+      '-Path',
+      buildPath,
+      '-DestinationPath',
+      pkgPath,
+      '-Force'
+    ]);
+
+    print("Archive creator returned with code: ${result.exitCode}");
+    if (result.exitCode != 0) {
+      print(result.stdout);
+      print(result.stderr);
+      return MakeResult(pkgPath: []);
+    }
+
+    return MakeResult(pkgPath: [pkgPath]);
   }
 }

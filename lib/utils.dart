@@ -32,6 +32,7 @@ Future<void> updateBuildData() async {
     'engine': await getFlutterVersion(),
     'buildAt': DateTime.now().toString().split('.').firstOrNull,
     'modifications': await getGitModificationCount(),
+    'script': '(fl_build preview)', // todo: change
     ...moreJson,
   };
   print(JSON_ENCODER.convert(data));
@@ -62,7 +63,7 @@ Future<void> changeAppleVersion() async {
 }
 
 Future<void> dartFormat() async {
-  final result = await Process.run('dart', ['format', '.']);
+  final result = await Process.run('dart', ['format', '.'], runInShell: true); // runInShell required on Win to omit .bat ext
   print(result.stdout);
   if (result.exitCode != 0) {
     print(result.stderr);
@@ -72,7 +73,7 @@ Future<void> dartFormat() async {
 
 Future<String> getFlutterVersion([int n = 1]) async {
   if (n > 3) return 'Unknown';
-  final result = await Process.run('flutter', ['--version']);
+  final result = await Process.run('flutter', ['--version'], runInShell: true); // runInShell required on Win to omit .bat ext
   final stdout = result.stdout as String;
   try {
     return stdout.split('\n')[0].split('•')[0].split(' ')[1].trim();

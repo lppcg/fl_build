@@ -4,14 +4,22 @@ enum Target {
   android,
   ios,
   web,
-  mac,
-  win,
+  mac(aliases: ["macos"]),
+  win(aliases: ["windows"]),
   linux,
   ;
 
+  const Target({
+    this.aliases = const [],
+  });
+
+  final List<String> aliases;
+
   static Target fromString(String str) {
+    str = str.toLowerCase();
     for (final item in values) {
       if (item.name == str) return item;
+      if (item.aliases.contains(str)) return item;
     }
     throw ArgumentError('Invalid target: $str');
   }
