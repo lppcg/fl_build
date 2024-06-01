@@ -127,7 +127,7 @@ abstract final class Maker {
   static Future<MakeResult?> flutterBuildWin() async {
     await _flutterBuild('windows');
 
-    final pkgPath = '${appName}_${COMMIT_COUNT}_amd64.zip';
+    final pkgPath = '${appName}_${COMMIT_COUNT}_windows_amd64.zip';
     final buildPath = 'build\\windows\\x64\\runner\\Release\\*';
 
     print("Creating zip archive to $pkgPath ...");
