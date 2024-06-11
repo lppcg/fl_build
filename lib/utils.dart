@@ -32,7 +32,6 @@ Future<void> updateBuildData() async {
     'engine': await getFlutterVersion(),
     'buildAt': DateTime.now().toString().split('.').firstOrNull,
     'modifications': await getGitModificationCount(),
-    'script': '(fl_build preview)', // todo: change
     ...moreJson,
   };
   print(JSON_ENCODER.convert(data));
@@ -178,4 +177,16 @@ Future<void> setupGithub() async {
   env.writeln('APP_NAME=$appName');
   env.writeln('BUILD_NUMBER=$COMMIT_COUNT');
   await File(envFile).writeAsString(env.toString());
+}
+
+Future<void> changePubVersion() async {
+  if (!makeCfg.changePubVersion) return;
+
+  final pubspec = await File('pubspec.yaml').readAsString();
+  // Use [replaceFirst] to avoid mistakenly changing other versions.
+  final newPubspec = pubspec.replaceFirst(
+    REG_PUB_VER,
+    'version: 1.0.$COMMIT_COUNT',
+  );
+  await File('pubspec.yaml').writeAsString(newPubspec);
 }

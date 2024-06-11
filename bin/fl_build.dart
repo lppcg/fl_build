@@ -58,8 +58,9 @@ void main(List<String> args) async {
 
   // Always change version to avoid dismatch version between platforms
   await changeAppleVersion();
-  await dartFormat();
+  await changePubVersion();
   await updateBuildData();
+  await dartFormat();
 
   final platforms = params['-p']?.split(',');
   final scp = params.containsKey('-s') || params.containsKey('--scp');

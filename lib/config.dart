@@ -20,6 +20,8 @@ final class MakeCfg {
   /// Cmds that runs before [flutterBuild]
   final Map<String, String> platformSetup;
 
+  final bool changePubVersion;
+
   MakeCfg({
     required this.appName,
     this.beforeBuild,
@@ -28,6 +30,7 @@ final class MakeCfg {
     required this.buildDataPath,
     required this.customArgs,
     required this.platformSetup,
+    required this.changePubVersion,
   });
 
   factory MakeCfg.fromJson(Map<String, dynamic> json) {
@@ -47,6 +50,7 @@ final class MakeCfg {
               (key, value) => MapEntry(key, value as String),
             ) ??
             {},
+        changePubVersion: json['changePubVersion'] as bool? ?? true,
       );
     } catch (e) {
       throw ArgumentError('Invalid config: $e');
