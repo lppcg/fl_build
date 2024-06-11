@@ -17,4 +17,4 @@ const SHELL_SCRIPT_PATH = 'lib/data/model/app/shell_func.dart';
 
 final REG_APPLE_VER = RegExp(r'CURRENT_PROJECT_VERSION = .+;');
 final REG_APPLE_MARKET_VER = RegExp(r'MARKETING_VERSION = .+');
-final REG_PUB_VER = RegExp(r'version: \d+\.\d+\.\d+');
+final REG_PUB_VER = RegExp(r'version: \d+\.\d+\.\d+\+?\d*');
