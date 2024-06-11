@@ -56,9 +56,12 @@ void main(List<String> args) async {
     }
   }
 
+  final changePubVer =
+      params.containsKey('-pv') || params.containsKey('--pub-ver');
+  if (changePubVer) await changePubVersion();
+
   // Always change version to avoid dismatch version between platforms
   await changeAppleVersion();
-  await changePubVersion();
   await updateBuildData();
   await dartFormat();
 
