@@ -62,7 +62,8 @@ Future<void> changeAppleVersion() async {
 }
 
 Future<void> dartFormat() async {
-  final result = await Process.run('dart', ['format', '.'], runInShell: true); // runInShell required on Win to omit .bat ext
+  final result = await Process.run('dart', ['format', '.'],
+      runInShell: true); // runInShell required on Win to omit .bat ext
   print(result.stdout);
   if (result.exitCode != 0) {
     print(result.stderr);
@@ -72,7 +73,8 @@ Future<void> dartFormat() async {
 
 Future<String> getFlutterVersion([int n = 1]) async {
   if (n > 3) return 'Unknown';
-  final result = await Process.run('flutter', ['--version'], runInShell: true); // runInShell required on Win to omit .bat ext
+  final result = await Process.run('flutter', ['--version'],
+      runInShell: true); // runInShell required on Win to omit .bat ext
   final stdout = result.stdout as String;
   try {
     return stdout.split('\n')[0].split('•')[0].split(' ')[1].trim();
@@ -182,11 +184,15 @@ Future<void> setupGithub() async {
 Future<void> changePubVersion() async {
   if (!makeCfg.changePubVersion) return;
 
-  final pubspec = await File('pubspec.yaml').readAsString();
+  final file = File('pubspec.yaml');
+  final pubspec = await file.readAsString();
   // Use [replaceFirst] to avoid mistakenly changing other versions.
   final newPubspec = pubspec.replaceFirst(
     REG_PUB_VER,
-    'version: 1.0.$COMMIT_COUNT',
+    // - Before pushing, ver = 1.
+    // - After pushing, ver = 2, but the version in remote is still 1.
+    // So, we need to increment the version by 1 to correctly match the version.
+    'version: 1.0.${COMMIT_COUNT + 1}',
   );
-  await File('pubspec.yaml').writeAsString(newPubspec);
+  await file.writeAsString(newPubspec);
 }
