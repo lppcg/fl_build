@@ -29,8 +29,6 @@ Future<void> updateBuildData() async {
   final data = {
     'name': appName,
     'build': COMMIT_COUNT,
-    'engine': await getFlutterVersion(),
-    'modifications': await getGitModificationCount(),
     ...moreJson,
   };
   print(JSON_ENCODER.convert(data));
@@ -68,27 +66,6 @@ Future<void> dartFormat() async {
     print(result.stderr);
     exit(1);
   }
-}
-
-Future<String> getFlutterVersion([int n = 1]) async {
-  if (n > 3) return 'Unknown';
-  final result = await Process.run('flutter', ['--version'],
-      runInShell: true); // runInShell required on Win to omit .bat ext
-  final stdout = result.stdout as String;
-  try {
-    return stdout.split('\n')[0].split('•')[0].split(' ')[1].trim();
-  } catch (_) {
-    return await getFlutterVersion(n + 1);
-  }
-}
-
-Future<int> getGitModificationCount() async {
-  final result =
-      await Process.run('git', ['ls-files', '-mo', '--exclude-standard']);
-  return (result.stdout as String)
-      .split('\n')
-      .where((line) => line.isNotEmpty)
-      .length;
 }
 
 Future<void> setupLinuxDir() async {
