@@ -20,8 +20,8 @@ final class MakeCfg {
   /// Cmds that runs before [flutterBuild]
   final Map<String, String> platformSetup;
 
-  /// Only build one ABI (arm64) for Android.
-  bool? onlyOneAbi;
+  /// Only works on Android
+  String? targetPlatfrom;
 
   MakeCfg({
     required this.appName,
@@ -31,7 +31,7 @@ final class MakeCfg {
     required this.buildDataPath,
     required this.customArgs,
     required this.platformSetup,
-    required this.onlyOneAbi,
+    required this.targetPlatfrom,
   });
 
   factory MakeCfg.fromJson(Map<String, dynamic> json) {
@@ -51,7 +51,7 @@ final class MakeCfg {
               (key, value) => MapEntry(key, value as String),
             ) ??
             {},
-        onlyOneAbi: json['onlyOneAbi'] as bool?,
+        targetPlatfrom: json['targetPlatfrom'] as String?,
       );
     } catch (e) {
       throw ArgumentError('Invalid config: $e');

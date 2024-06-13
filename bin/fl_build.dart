@@ -67,8 +67,10 @@ void main(List<String> args) async {
 
   final platforms = params['-p']?.split(',');
   final scp = params.containsKey('-s') || params.containsKey('--scp');
-  final onlyOneAbi = params.containsKey('-ooa') || params.containsKey('--only-one-abi');
-  if (onlyOneAbi && makeCfg.onlyOneAbi == null) makeCfg.onlyOneAbi = true;
+  final targetPlatfrom = params['-tp'] ?? params['--target-platfrom'];
+  if (targetPlatfrom != null && makeCfg.targetPlatfrom == null) {
+    makeCfg.targetPlatfrom = targetPlatfrom;
+  }
 
   if (platforms == null) {
     print('No platform specified. Exit.');
