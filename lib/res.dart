@@ -6,7 +6,7 @@ import 'dart:io';
 final COMMIT_COUNT = () {
   final result = Process.runSync('git', ['rev-list', '--count', 'HEAD']);
   final val = int.tryParse(result.stdout.toString().trim()) ?? 0;
-  if (envFile == null) return val;
+  if (envFile != null) return val;
   // - Before pushing, ver = 1.
   // - After pushing, ver = 2, but the version wrote in remote file is still 1.
   // So, we need to increment the version by 1 to correctly match the version.
