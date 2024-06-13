@@ -143,7 +143,6 @@ Future<void> installLinuxEnv() async {
 }
 
 Future<void> setupGithub() async {
-  final envFile = Platform.environment['GITHUB_ENV'];
   if (envFile == null) {
     print('GITHUB_ENV is not set. Skip writing env.');
     return;
@@ -154,7 +153,7 @@ Future<void> setupGithub() async {
   final env = StringBuffer();
   env.writeln('APP_NAME=$appName');
   env.writeln('BUILD_NUMBER=$COMMIT_COUNT');
-  await File(envFile).writeAsString(env.toString());
+  await File(envFile!).writeAsString(env.toString());
 }
 
 Future<void> changePubVersion() async {
