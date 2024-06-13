@@ -30,7 +30,6 @@ Future<void> updateBuildData() async {
     'name': appName,
     'build': COMMIT_COUNT,
     'engine': await getFlutterVersion(),
-    'buildAt': DateTime.now().toString().split('.').firstOrNull,
     'modifications': await getGitModificationCount(),
     ...moreJson,
   };

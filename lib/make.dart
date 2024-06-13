@@ -80,22 +80,33 @@ abstract final class Maker {
   }
 
   static Future<MakeResult?> flutterBuildAndroid() async {
-    await _flutterBuild('apk', customArgs: ['--split-per-abi']);
+    if (makeCfg.onlyOneAbi == true) {
+      await _flutterBuild(
+        'apk',
+        customArgs: ['--target-platform=android-arm64'],
+      );
+      return MakeResult(
+        pkgPath: ['build/app/outputs/flutter-apk/app-release.apk'],
+      );
+    } else {
+      await _flutterBuild('apk', customArgs: ['--split-per-abi']);
 
-    // {originName: newName}
-    final namesMap = {
-      'app-arm64-v8a-release.apk': '${appName}_${COMMIT_COUNT}_arm64.apk',
-      'app-armeabi-v7a-release.apk': '${appName}_${COMMIT_COUNT}_arm.apk',
-      'app-x86_64-release.apk': '${appName}_${COMMIT_COUNT}_amd64.apk',
-    };
-    for (final entry in namesMap.entries) {
-      final origin = entry.key;
-      final newName = entry.value;
-      await File('$APK_DIR$origin').rename('$APK_DIR$newName');
+      // {originName: newName}
+      final namesMap = {
+        'app-arm64-v8a-release.apk': '${appName}_${COMMIT_COUNT}_arm64.apk',
+        'app-armeabi-v7a-release.apk': '${appName}_${COMMIT_COUNT}_arm.apk',
+        'app-x86_64-release.apk': '${appName}_${COMMIT_COUNT}_amd64.apk',
+      };
+      for (final entry in namesMap.entries) {
+        final origin = entry.key;
+        final newName = entry.value;
+        await File('$APK_DIR$origin').rename('$APK_DIR$newName');
+      }
+
+      return MakeResult(
+        pkgPath: namesMap.values.map((e) => '$APK_DIR$e').toList(),
+      );
     }
-
-    return MakeResult(
-        pkgPath: namesMap.values.map((e) => '$APK_DIR$e').toList());
   }
 
   static Future<MakeResult?> flutterBuildLinux() async {
