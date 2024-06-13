@@ -20,9 +20,6 @@ final class MakeCfg {
   /// Cmds that runs before [flutterBuild]
   final Map<String, String> platformSetup;
 
-  /// Only works on Android
-  String? targetPlatfrom;
-
   MakeCfg({
     required this.appName,
     this.beforeBuild,
@@ -31,7 +28,6 @@ final class MakeCfg {
     required this.buildDataPath,
     required this.customArgs,
     required this.platformSetup,
-    required this.targetPlatfrom,
   });
 
   factory MakeCfg.fromJson(Map<String, dynamic> json) {
@@ -51,7 +47,6 @@ final class MakeCfg {
               (key, value) => MapEntry(key, value as String),
             ) ??
             {},
-        targetPlatfrom: json['targetPlatfrom'] as String?,
       );
     } catch (e) {
       throw ArgumentError('Invalid config: $e');

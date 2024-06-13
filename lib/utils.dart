@@ -160,14 +160,10 @@ Future<void> setupGithub() async {
 Future<void> changePubVersion() async {
   final file = File('pubspec.yaml');
   final pubspec = await file.readAsString();
-  final ver = COMMIT_COUNT + 1;
   // Use [replaceFirst] to avoid mistakenly changing other versions.
   final newPubspec = pubspec.replaceFirst(
     REG_PUB_VER,
-    // - Before pushing, ver = 1.
-    // - After pushing, ver = 2, but the version in remote is still 1.
-    // So, we need to increment the version by 1 to correctly match the version.
-    'version: 1.0.$ver+$ver',
+    'version: 1.0.$COMMIT_COUNT+$COMMIT_COUNT',
   );
   await file.writeAsString(newPubspec);
 }

@@ -32,8 +32,7 @@ void main(List<String> args) async {
     }
   }
 
-  final file =
-      File(params['-c'] ?? params['--fl-build-config'] ?? 'fl_build.json');
+  final file = File(params['-c'] ?? 'fl_build.json');
   if (await file.exists()) {
     final content = await file.readAsString();
     final config = json.decode(content) as Map<String, dynamic>;
@@ -41,6 +40,15 @@ void main(List<String> args) async {
   } else {
     print('Make config is required: ${file.path}');
     exit(1);
+  }
+
+  final buildPreparation = params.containsKey('-bp');
+  if (buildPreparation) {
+    await updateBuildData(); // Put it at first
+    await changePubVersion();
+    await changeAppleVersion();
+    await dartFormat();
+    return;
   }
 
   await setupGithub();
@@ -56,19 +64,8 @@ void main(List<String> args) async {
     }
   }
 
-  final changePubVer =
-      params.containsKey('-pv') || params.containsKey('--pub-ver');
-  if (changePubVer) await changePubVersion();
-
-  await updateBuildData();
-  await dartFormat();
-
   final platforms = params['-p']?.split(',');
   final scp = params.containsKey('-s') || params.containsKey('--scp');
-  final targetPlatfrom = params['-tp'] ?? params['--target-platfrom'];
-  if (targetPlatfrom != null && makeCfg.targetPlatfrom == null) {
-    makeCfg.targetPlatfrom = targetPlatfrom;
-  }
 
   if (platforms == null) {
     print('No platform specified. Exit.');

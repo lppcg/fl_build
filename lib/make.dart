@@ -70,23 +70,17 @@ abstract final class Maker {
   }
 
   static Future<MakeResult?> flutterBuildIOS() async {
-    await changeAppleVersion();
     await _flutterBuild('ipa');
     return null;
   }
 
   static Future<MakeResult?> flutterBuildMacOS() async {
-    await changeAppleVersion();
     await _flutterBuild('macos');
     return null;
   }
 
   static Future<MakeResult?> flutterBuildAndroid() async {
-    final customArgs = switch (makeCfg.targetPlatfrom) {
-      null => ['--split-per-abi'],
-      final val => ['--target-platform=$val'],
-    };
-    await _flutterBuild('apk', customArgs: customArgs);
+    await _flutterBuild('apk', customArgs: ['--split-per-abi']);
 
     // {originName: newName}
     final namesMap = {
