@@ -1,4 +1,4 @@
-/// Which is also called [Platform], but the Dart SDK already defines a class 
+/// Which is also called [Platform], but the Dart SDK already defines a class
 /// with that name, so we'll call it [Target].
 enum Target {
   android,

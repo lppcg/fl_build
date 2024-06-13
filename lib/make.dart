@@ -70,11 +70,13 @@ abstract final class Maker {
   }
 
   static Future<MakeResult?> flutterBuildIOS() async {
+    await changeAppleVersion();
     await _flutterBuild('ipa');
     return null;
   }
 
   static Future<MakeResult?> flutterBuildMacOS() async {
+    await changeAppleVersion();
     await _flutterBuild('macos');
     return null;
   }

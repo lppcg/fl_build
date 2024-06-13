@@ -60,8 +60,6 @@ void main(List<String> args) async {
       params.containsKey('-pv') || params.containsKey('--pub-ver');
   if (changePubVer) await changePubVersion();
 
-  // Always change version to avoid dismatch version between platforms
-  await changeAppleVersion();
   await updateBuildData();
   await dartFormat();
 
@@ -76,6 +74,7 @@ void main(List<String> args) async {
     print('No platform specified. Exit.');
     return;
   }
+
   for (final platform in platforms) {
     final target = Target.fromString(platform);
     final res = await Maker.run(target);
