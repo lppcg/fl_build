@@ -15,6 +15,17 @@ extension IterX<T> on Iterable<T> {
   }
 }
 
+/// Only can be used in local. If you want to read version at remote (Github 
+/// Actions), use [buildDataVersion] instead.
+final _commitCount = () {
+  final result = Process.runSync('git', ['rev-list', '--count', 'HEAD']);
+  final val = int.tryParse(result.stdout.toString().trim()) ?? 0;
+  // - Before pushing, ver = 1.
+  // - After pushing, ver = 2, but the version wrote in remote file is still 1.
+  // So, we need to increment the version by 1 to correctly match the version.
+  return val + 1;
+}();
+
 Future<void> updateBuildData() async {
   final moreJson = await () async {
     final file = File(MORE_BUILD_DATA_PATH);
@@ -28,7 +39,7 @@ Future<void> updateBuildData() async {
   }();
   final data = {
     'name': appName,
-    'build': COMMIT_COUNT,
+    'build': _commitCount,
     ...moreJson,
   };
   print(JSON_ENCODER.convert(data));
@@ -52,8 +63,8 @@ Future<void> changeAppleVersion() async {
     final contents = await file.readAsString();
     final newContents = contents
         .replaceAll(
-            REG_APPLE_MARKET_VER, 'MARKETING_VERSION = 1.0.$COMMIT_COUNT;')
-        .replaceAll(REG_APPLE_VER, 'CURRENT_PROJECT_VERSION = $COMMIT_COUNT;');
+            REG_APPLE_MARKET_VER, 'MARKETING_VERSION = 1.0.$_commitCount;')
+        .replaceAll(REG_APPLE_VER, 'CURRENT_PROJECT_VERSION = $_commitCount;');
     await file.writeAsString(newContents);
   }
 }
@@ -152,7 +163,7 @@ Future<void> setupGithub() async {
 
   final env = StringBuffer();
   env.writeln('APP_NAME=$appName');
-  env.writeln('BUILD_NUMBER=$COMMIT_COUNT');
+  env.writeln('BUILD_NUMBER=$buildDataVersion');
   await File(envFile!).writeAsString(env.toString());
 }
 
@@ -162,7 +173,7 @@ Future<void> changePubVersion() async {
   // Use [replaceFirst] to avoid mistakenly changing other versions.
   final newPubspec = pubspec.replaceFirst(
     REG_PUB_VER,
-    'version: 1.0.$COMMIT_COUNT+$COMMIT_COUNT',
+    'version: 1.0.$_commitCount+$_commitCount',
   );
   await file.writeAsString(newPubspec);
 }

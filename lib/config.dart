@@ -1,7 +1,17 @@
+import 'dart:io';
+
 late final MakeCfg makeCfg;
 
 String get appName => makeCfg.appName;
 String get appNameLower => appName.toLowerCase();
+
+final buildDataVersion = () {
+  final file = File(makeCfg.buildDataPath);
+  if (!file.existsSync()) return 0;
+  final contents = file.readAsStringSync();
+  final match = RegExp(r'static const int build = (\d+);').firstMatch(contents);
+  return int.tryParse(match?.group(1) ?? '0') ?? 0;
+}();
 
 final class MakeCfg {
   final String appName;

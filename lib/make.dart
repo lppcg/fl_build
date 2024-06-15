@@ -52,8 +52,8 @@ abstract final class Maker {
     final args = [
       'build',
       buildType,
-      '--build-number=$COMMIT_COUNT',
-      '--build-name=1.0.$COMMIT_COUNT',
+      '--build-number=$buildDataVersion',
+      '--build-name=1.0.$buildDataVersion',
       if (customArgs != null) ...customArgs,
       if (makeCfgArgs != null) ...makeCfgArgs,
     ];
@@ -84,9 +84,9 @@ abstract final class Maker {
 
     // {originName: newName}
     final namesMap = {
-      'app-arm64-v8a-release.apk': '${appName}_${COMMIT_COUNT}_arm64.apk',
-      'app-armeabi-v7a-release.apk': '${appName}_${COMMIT_COUNT}_arm.apk',
-      'app-x86_64-release.apk': '${appName}_${COMMIT_COUNT}_amd64.apk',
+      'app-arm64-v8a-release.apk': '${appName}_${buildDataVersion}_arm64.apk',
+      'app-armeabi-v7a-release.apk': '${appName}_${buildDataVersion}_arm.apk',
+      'app-x86_64-release.apk': '${appName}_${buildDataVersion}_amd64.apk',
     };
     for (final entry in namesMap.entries) {
       final origin = entry.key;
@@ -120,7 +120,7 @@ abstract final class Maker {
       exit(appimg.exitCode);
     }
 
-    final pkgPath = '${appName}_${COMMIT_COUNT}_amd64.AppImage';
+    final pkgPath = '${appName}_${buildDataVersion}_amd64.AppImage';
     await File('$appName-x86_64.AppImage').rename(pkgPath);
     return MakeResult(pkgPath: [pkgPath]);
   }
@@ -128,7 +128,7 @@ abstract final class Maker {
   static Future<MakeResult?> flutterBuildWin() async {
     await _flutterBuild('windows');
 
-    final pkgPath = '${appName}_${COMMIT_COUNT}_windows_amd64.zip';
+    final pkgPath = '${appName}_${buildDataVersion}_windows_amd64.zip';
     final buildPath = 'build\\windows\\x64\\runner\\Release\\*';
 
     print("Creating zip archive to $pkgPath ...");
