@@ -42,17 +42,28 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  final buildPreparation = params.containsKey('-bp');
+  // If [forRelease] is true, it will run all the preparation steps.
+  final buildPreparation =
+      params.containsKey('-bp') || params.containsKey('-r');
   if (buildPreparation) {
     await updateBuildData(); // Put it at first
     await changePubVersion();
     await changeAppleVersion();
     await dartFormat();
-    return;
   }
 
+  final forRelease = params.containsKey('-r');
+  if (forRelease) {
+    await gitSubmmit();
+  }
+
+  // End of all build preparations
+  if (buildPreparation || forRelease) return;
+
+  // If it's running in Github Actions, it will setup the environment.
   await setupGithub();
 
+  // Before build
   final beforeBuild = makeCfg.beforeBuild;
   if (beforeBuild != null) {
     print('Running beforeBuild...');
@@ -64,6 +75,7 @@ void main(List<String> args) async {
     }
   }
 
+  // Build
   final platforms = params['-p']?.split(',');
   final scp = params.containsKey('-s') || params.containsKey('--scp');
 
@@ -81,6 +93,7 @@ void main(List<String> args) async {
     }
   }
 
+  // After build
   final afterBuild = makeCfg.afterBuild;
   if (afterBuild != null) {
     print('Running afterBuild...');

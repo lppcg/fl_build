@@ -15,7 +15,7 @@ extension IterX<T> on Iterable<T> {
   }
 }
 
-/// Only can be used in local. If you want to read version at remote (Github 
+/// Only can be used in local. If you want to read version at remote (Github
 /// Actions), use [buildDataVersion] instead.
 final _commitCount = () {
   final result = Process.runSync('git', ['rev-list', '--count', 'HEAD']);
@@ -25,6 +25,40 @@ final _commitCount = () {
   // So, we need to increment the version by 1 to correctly match the version.
   return val + 1;
 }();
+
+/// commit + push + gita_tag_push
+Future<void> gitSubmmit() async {
+  final commitConfirm = await askConfirm('Commit?');
+  if (commitConfirm != true) return;
+  final commit = await Process.run(
+    'git',
+    ['commit', '-S', '-m', 'chore: bump version'],
+  );
+  if (commit.exitCode != 0) {
+    print(commit.stderr);
+    exit(1);
+  }
+
+  final pushConfirm = await askConfirm('Push?');
+  if (pushConfirm != true) return;
+  final push = await Process.run('git', ['push']);
+  if (push.exitCode != 0) {
+    print(push.stderr);
+    exit(1);
+  }
+
+  final tagConfirm = await askConfirm('Tag push?');
+  if (tagConfirm != true) return;
+  final tagPush = await Process.run(
+    'zsh',
+    ['-c', '. ~/.zshrc && git_tag_push'],
+    runInShell: true,
+  );
+  if (tagPush.exitCode != 0) {
+    print(tagPush.stderr);
+    exit(1);
+  }
+}
 
 Future<void> updateBuildData() async {
   final moreJson = await () async {
@@ -176,4 +210,16 @@ Future<void> changePubVersion() async {
     'version: 1.0.$_commitCount+$_commitCount',
   );
   await file.writeAsString(newPubspec);
+}
+
+Future<bool?> askConfirm(String message, {bool? defaultYes}) async {
+  final defaultStr = switch (defaultYes) {
+    true => '(Y/n)',
+    false => '(y/N)',
+    null => '(y/n)',
+  };
+  stdout.write('$PINK$message$RESET [$defaultStr]: ');
+  final input = stdin.readLineSync();
+  if (input == null || input.isEmpty) return defaultYes;
+  return input.toLowerCase() == 'y';
 }
