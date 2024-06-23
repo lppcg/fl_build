@@ -204,6 +204,14 @@ Future<void> setupGithub() async {
 Future<void> changePubVersion() async {
   final file = File('pubspec.yaml');
   final pubspec = await file.readAsString();
+  final ver = int.tryParse(REG_PUB_VER.firstMatch(pubspec)?.group(2) ?? '');
+  if (ver == null) {
+    print('Version not found in pubspec.yaml.');
+    exit(1);
+  }
+
+  if (ver == _commitCount) return;
+
   // Use [replaceFirst] to avoid mistakenly changing other versions.
   final newPubspec = pubspec.replaceFirst(
     REG_PUB_VER,
@@ -214,9 +222,9 @@ Future<void> changePubVersion() async {
 
 Future<bool?> askConfirm(String message, {bool? defaultYes}) async {
   final defaultStr = switch (defaultYes) {
-    true => '(Y/n)',
-    false => '(y/N)',
-    null => '(y/n)',
+    true => 'Y/n',
+    false => 'y/N',
+    null => 'y/n',
   };
   stdout.write('$PINK$message$RESET [$defaultStr]: ');
   final input = stdin.readLineSync();
