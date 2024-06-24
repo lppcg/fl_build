@@ -16,5 +16,34 @@ final REG_APPLE_VER = RegExp(r'CURRENT_PROJECT_VERSION = .+;');
 final REG_APPLE_MARKET_VER = RegExp(r'MARKETING_VERSION = .+');
 final REG_PUB_VER = RegExp(r'version: (\d+\.\d+\.\d+)\+?(\d*)');
 
-const PINK = '\x1B[35m';
+const RED = '\x1B[31m';
+const GREEN = '\x1B[32m';
+const BLUE = '\x1B[34m';
+const MEGENTA = '\x1B[35m';
 const RESET = '\x1B[0m';
+
+void printColor(String msg, String color) {
+  if (stdout.hasTerminal) {
+    stdout.write(color);
+    stdout.write(msg);
+    stdout.write(RESET);
+  } else {
+    stdout.write(msg);
+  }
+}
+
+void printRed(String message) {
+  printColor(message, RED);
+}
+
+void printGreen(String message) {
+  printColor(message, GREEN);
+}
+
+void printBlue(String message) {
+  printColor(message, BLUE);
+}
+
+void printMegenta(String message) {
+  printColor(message, MEGENTA);
+}

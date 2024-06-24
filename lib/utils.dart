@@ -119,7 +119,7 @@ Future<void> setupLinuxDir() async {
   // cp -r assets/app_icon.png linux.AppDir
   const appIconPath = 'assets/app_icon.png';
   if (!await File(appIconPath).exists()) {
-    print('No app_icon.png found in assets.');
+    printRed('No app_icon.png found in assets.');
     exit(1);
   }
   await Process.run('cp', ['-r', appIconPath, LINUX_APP_DIR]);
@@ -153,7 +153,7 @@ Future<void> installLinuxEnv() async {
 
   final result = await Process.run('which', ['appimagetool']);
   if (result.exitCode != 0) {
-    print('appimagetool is not installed. Installing...');
+    printBlue('appimagetool is not installed. Installing...');
     const url = 'https://github.com/AppImage/appimagetool/releases/download/'
         'continuous/appimagetool-x86_64.AppImage';
     final dl = await Process.run(
@@ -189,7 +189,7 @@ Future<void> installLinuxEnv() async {
 
 Future<void> setupGithub() async {
   if (envFile == null) {
-    print('GITHUB_ENV is not set. Skip writing env.');
+    printBlue('GITHUB_ENV is not set. Skip writing env.');
     return;
   }
 
@@ -206,7 +206,7 @@ Future<void> changePubVersion() async {
   final pubspec = await file.readAsString();
   final ver = int.tryParse(REG_PUB_VER.firstMatch(pubspec)?.group(2) ?? '');
   if (ver == null) {
-    print('Version not found in pubspec.yaml.');
+    printRed('Version not found in pubspec.yaml.');
     exit(1);
   }
 
@@ -226,7 +226,7 @@ Future<bool?> askConfirm(String message, {bool? defaultYes}) async {
     false => 'y/N',
     null => 'y/n',
   };
-  stdout.write('$PINK$message$RESET [$defaultStr]: ');
+  stdout.write('$MEGENTA$message$RESET [$defaultStr]: ');
   final input = stdin.readLineSync();
   if (input == null || input.isEmpty) return defaultYes;
   return input.toLowerCase() == 'y';

@@ -6,13 +6,14 @@ import 'dart:io';
 
 import 'package:fl_build/config.dart';
 import 'package:fl_build/make.dart';
+import 'package:fl_build/res.dart';
 import 'package:fl_build/scp.dart';
 import 'package:fl_build/target.dart';
 import 'package:fl_build/utils.dart';
 
 void main(List<String> args) async {
   if (args.isEmpty) {
-    print('No action. Exit.');
+    printRed('No action. Exit.');
     return;
   }
 
@@ -28,7 +29,7 @@ void main(List<String> args) async {
         i++;
       }
     } else {
-      throw ArgumentError('Invalid: $arg');
+      printMegenta('Invalid: $arg');
     }
   }
 
@@ -38,7 +39,7 @@ void main(List<String> args) async {
     final config = json.decode(content) as Map<String, dynamic>;
     makeCfg = MakeCfg.fromJson(config);
   } else {
-    print('Make config is required: ${file.path}');
+    printMegenta('Make config is required: ${file.path}');
     exit(1);
   }
 
@@ -57,18 +58,14 @@ void main(List<String> args) async {
     await gitSubmmit();
   }
 
-  // End of all build preparations
-  if (buildPreparation || forRelease) return;
-
   // If it's running in Github Actions, it will setup the environment.
   await setupGithub();
 
   // Before build
   final beforeBuild = makeCfg.beforeBuild;
   if (beforeBuild != null) {
-    print('Running beforeBuild...');
+    printBlue('Before build...');
     final result = await Process.run('sh', ['-c', beforeBuild]);
-    print(result.stdout);
     if (result.exitCode != 0) {
       print(result.stderr);
       exit(1);
@@ -80,7 +77,7 @@ void main(List<String> args) async {
   final scp = params.containsKey('-s') || params.containsKey('--scp');
 
   if (platforms == null) {
-    print('No platform specified. Exit.');
+    printRed('No platform specified. Exit.');
     return;
   }
 
@@ -96,9 +93,8 @@ void main(List<String> args) async {
   // After build
   final afterBuild = makeCfg.afterBuild;
   if (afterBuild != null) {
-    print('Running afterBuild...');
+    printBlue('After build...');
     final result = await Process.run('sh', ['-c', afterBuild]);
-    print(result.stdout);
     if (result.exitCode != 0) {
       print(result.stderr);
       exit(1);

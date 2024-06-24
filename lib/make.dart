@@ -37,9 +37,8 @@ abstract final class Maker {
         .firstWhereOrNull((e) => e.key == buildType)
         ?.value;
     if (setup != null) {
-      print('Running platformSetup...');
+      printBlue('Platform setup...');
       final result = await Process.run('sh', ['-c', setup]);
-      print(result.stdout);
       if (result.exitCode != 0) {
         print(result.stderr);
         exit(1);
@@ -58,7 +57,7 @@ abstract final class Maker {
       if (makeCfgArgs != null) ...makeCfgArgs,
     ];
 
-    print('\n[$buildType]\nflutter ${args.join(' ')}');
+    printBlue('\n[$buildType]\nflutter ${args.join(' ')}');
 
     final buildResult = await Process.run('flutter', args, runInShell: true);
     final exitCode = buildResult.exitCode;
@@ -131,7 +130,7 @@ abstract final class Maker {
     final pkgPath = '${appName}_${buildDataVersion}_windows_amd64.zip';
     final buildPath = 'build\\windows\\x64\\runner\\Release\\*';
 
-    print("Creating zip archive to $pkgPath ...");
+    //print("Creating zip archive to $pkgPath ...");
 
     final result = await Process.run('powershell', [
       'Compress-Archive',
@@ -142,7 +141,7 @@ abstract final class Maker {
       '-Force'
     ]);
 
-    print("Archive creator returned with code: ${result.exitCode}");
+    //print("Archive creator returned with code: ${result.exitCode}");
     if (result.exitCode != 0) {
       print(result.stdout);
       print(result.stderr);
