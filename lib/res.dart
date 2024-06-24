@@ -22,13 +22,14 @@ const BLUE = '\x1B[34m';
 const MEGENTA = '\x1B[35m';
 const RESET = '\x1B[0m';
 
+/// println
 void printColor(String msg, String color) {
   if (stdout.hasTerminal) {
     stdout.write(color);
     stdout.write(msg);
-    stdout.write(RESET);
+    stdout.writeln(RESET);
   } else {
-    stdout.write(msg);
+    stdout.writeln(msg);
   }
 }
 

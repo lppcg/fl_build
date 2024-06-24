@@ -57,7 +57,7 @@ abstract final class Maker {
       if (makeCfgArgs != null) ...makeCfgArgs,
     ];
 
-    printBlue('\n[$buildType]\nflutter ${args.join(' ')}');
+    print('\n[$buildType]\nflutter ${args.join(' ')}');
 
     final buildResult = await Process.run('flutter', args, runInShell: true);
     final exitCode = buildResult.exitCode;
