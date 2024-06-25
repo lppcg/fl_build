@@ -28,6 +28,14 @@ final _commitCount = () {
 
 /// commit + push + gita_tag_push
 Future<void> gitSubmmit() async {
+  final addConfirm = await askConfirm('Add all changes?');
+  if (addConfirm != true) return;
+  final add = await Process.run('git', ['add', '.']);
+  if (add.exitCode != 0) {
+    print(add.stderr);
+    exit(1);
+  }
+
   final commitConfirm = await askConfirm('Commit?');
   if (commitConfirm != true) return;
   final commit = await Process.run(
