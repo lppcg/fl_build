@@ -122,13 +122,13 @@ Future<void> setupLinuxDir() async {
     printRed('No app_icon.png found in assets.');
     exit(1);
   }
-  await Process.run('cp', ['-r', appIconPath, LINUX_APP_DIR]);
+  await Process.run('cp', [appIconPath, LINUX_APP_DIR]);
 
   // Create AppRun
   final appRun = '''
 #!/bin/sh
 cd "\$(dirname "\$0")"
-exec ./$appName
+exec ./bundle/$appName
 ''';
   const appRunPath = '$LINUX_APP_DIR/AppRun';
   await File(appRunPath).writeAsString(appRun);
