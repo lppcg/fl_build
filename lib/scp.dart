@@ -21,7 +21,7 @@ abstract final class Scps {
     final name = relPath.split('/').last;
     final result = await Process.run(
       'scp',
-      [relPath, '$SCP_PATH$appNameLower/$name'],
+      [relPath, '$SCP_PATH$appNameLower/pkg/$name'],
       runInShell: true,
     );
     if (result.exitCode != 0) {
