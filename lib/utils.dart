@@ -54,18 +54,6 @@ Future<void> gitSubmmit() async {
     print(push.stderr);
     exit(1);
   }
-
-  final tagConfirm = await askConfirm('Tag push?');
-  if (tagConfirm != true) return;
-  final tagPush = await Process.run(
-    'zsh',
-    ['-c', '. ~/.zshrc && git_tag_push'],
-    runInShell: true,
-  );
-  if (tagPush.exitCode != 0) {
-    print(tagPush.stderr);
-    exit(1);
-  }
 }
 
 Future<void> updateBuildData() async {
