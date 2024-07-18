@@ -171,6 +171,11 @@ Future<void> installLinuxEnv() async {
   }
 
   print('Installing dependencies...');
+  final aptUpdate = await Process.run('sudo', ['apt', 'update']);
+  if (aptUpdate.exitCode != 0) {
+    print(aptUpdate.stderr);
+    // exit(1);
+  }
   const deps = 'clang cmake ninja-build pkg-config libgtk-3-dev '
       'libvulkan-dev desktop-file-utils';
   final apts = await Process.run(
