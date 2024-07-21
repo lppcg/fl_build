@@ -90,7 +90,9 @@ abstract final class Maker {
     for (final entry in namesMap.entries) {
       final origin = entry.key;
       final newName = entry.value;
-      await File('$APK_DIR$origin').rename('$APK_DIR$newName');
+      // Use copy, so that the shell history will only retain the record `adb
+      // install build/app/outputs/flutter-apk/app-arm64-v8a-release.apk`
+      await File('$APK_DIR$origin').copy('$APK_DIR$newName');
     }
 
     return MakeResult(
