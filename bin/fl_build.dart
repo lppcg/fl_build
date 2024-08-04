@@ -54,7 +54,7 @@ void main(List<String> args) async {
   }
 
   // If it's running in Github Actions, it will setup the environment.
-  await setupGithub();
+  await setupGithubEnv();
 
   // Build
   final platforms = params['-p']?.split(',');

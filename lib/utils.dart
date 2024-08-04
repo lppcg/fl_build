@@ -145,7 +145,7 @@ Categories=Utility;
 }
 
 Future<void> installLinuxEnv() async {
-  if (!Platform.isLinux) return;
+  if (!Platform.isLinux || !isGithubAction) return;
 
   final result = await Process.run('which', ['appimagetool']);
   if (result.exitCode != 0) {
@@ -188,12 +188,10 @@ Future<void> installLinuxEnv() async {
   }
 }
 
-Future<void> setupGithub() async {
-  if (envFile == null) {
-    printBlue('GITHUB_ENV is not set. Skip writing env.');
-    return;
-  }
+Future<void> setupGithubEnv() async {
+  if (!isGithubAction) return;
 
+  printBlue('Setting up Github Actions...');
   final env = StringBuffer();
   env.writeln('APP_NAME=$appName');
   env.writeln('BUILD_NUMBER=$buildDataVersion');

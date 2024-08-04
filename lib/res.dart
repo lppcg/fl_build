@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 final envFile = Platform.environment['GITHUB_ENV'];
+final isGithubAction = envFile != null;
 
 const MORE_BUILD_DATA_PATH = 'more_build_data.json';
 const JSON_ENCODER = JsonEncoder.withIndent('  ');
