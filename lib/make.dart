@@ -101,6 +101,7 @@ abstract final class Maker {
   }
 
   static Future<MakeResult?> flutterBuildLinux() async {
+    await installLinuxEnv();
     await setupLinuxDir();
     await _flutterBuild('linux');
     // cp -r build/linux/x64/release/bundle/* appName.AppDir

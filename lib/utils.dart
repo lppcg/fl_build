@@ -194,8 +194,6 @@ Future<void> setupGithub() async {
     return;
   }
 
-  await installLinuxEnv();
-
   final env = StringBuffer();
   env.writeln('APP_NAME=$appName');
   env.writeln('BUILD_NUMBER=$buildDataVersion');
