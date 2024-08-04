@@ -170,6 +170,17 @@ Future<void> installLinuxEnv() async {
     }
   }
 
+  final appimageRuntime = File(APPIMAGE_RUNTIME_FILE);
+  if (!await appimageRuntime.exists()) {
+    printBlue('Downloading $APPIMAGE_RUNTIME_FILE...');
+    const url = 'https://github.com/AppImage/type2-runtime/releases/download/old/runtime-fuse3-x86_64';
+    final dl = await Process.run('wget', [url]);
+    if (dl.exitCode != 0) {
+      print(dl.stderr);
+      exit(1);
+    }
+  }
+
   print('Installing dependencies...');
   final aptUpdate = await Process.run('sudo', ['apt', 'update']);
   if (aptUpdate.exitCode != 0) {

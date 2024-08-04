@@ -113,7 +113,11 @@ abstract final class Maker {
     // Run appimagetool
     final appimg = await Process.run(
       'appimagetool',
-      [LINUX_APP_DIR],
+      [
+        LINUX_APP_DIR,
+        '--runtime-file',
+        APPIMAGE_RUNTIME_FILE,
+      ],
       environment: {'ARCH': 'x86_64'},
     );
     if (appimg.exitCode != 0) {

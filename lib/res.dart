@@ -13,6 +13,8 @@ const APK_DIR = 'build/app/outputs/flutter-apk/';
 const XCODE_CFG_PATH = 'Runner.xcodeproj/project.pbxproj';
 const SHELL_SCRIPT_PATH = 'lib/data/model/app/shell_func.dart';
 
+const APPIMAGE_RUNTIME_FILE = '/tmp/runtime-fuse3-x86_64';
+
 final REG_APPLE_VER = RegExp(r'CURRENT_PROJECT_VERSION = .+;');
 final REG_APPLE_MARKET_VER = RegExp(r'MARKETING_VERSION = .+');
 final REG_PUB_VER = RegExp(r'version: (\d+\.\d+\.\d+)\+?(\d*)');
