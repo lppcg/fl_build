@@ -12,11 +12,6 @@ import 'package:fl_build/target.dart';
 import 'package:fl_build/utils.dart';
 
 void main(List<String> args) async {
-  if (args.isEmpty) {
-    printRed('No action. Exit.');
-    return;
-  }
-
   final params = <String, String?>{};
   for (var i = 0; i < args.length;) {
     final arg = args[i];
@@ -61,6 +56,15 @@ void main(List<String> args) async {
   // If it's running in Github Actions, it will setup the environment.
   await setupGithub();
 
+  // Build
+  final platforms = params['-p']?.split(',');
+  final scp = params.containsKey('-s') || params.containsKey('--scp');
+
+  if (platforms == null) {
+    printRed('No platform specified. Exit.');
+    return;
+  }
+
   // Before build
   final beforeBuild = makeCfg.beforeBuild;
   if (beforeBuild != null) {
@@ -70,15 +74,6 @@ void main(List<String> args) async {
       print(result.stderr);
       exit(1);
     }
-  }
-
-  // Build
-  final platforms = params['-p']?.split(',');
-  final scp = params.containsKey('-s') || params.containsKey('--scp');
-
-  if (platforms == null) {
-    printRed('No platform specified. Exit.');
-    return;
   }
 
   for (final platform in platforms) {
