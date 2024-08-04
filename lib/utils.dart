@@ -174,7 +174,7 @@ Future<void> installLinuxEnv() async {
   if (!await appimageRuntime.exists()) {
     printBlue('Downloading $APPIMAGE_RUNTIME_FILE...');
     const url = 'https://github.com/AppImage/type2-runtime/releases/download/old/runtime-fuse3-x86_64';
-    final dl = await Process.run('wget', [url]);
+    final dl = await Process.run('wget', ['-O', APPIMAGE_RUNTIME_FILE, url]);
     if (dl.exitCode != 0) {
       print(dl.stderr);
       exit(1);
