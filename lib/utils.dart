@@ -146,7 +146,7 @@ Categories=Utility;
 }
 
 Future<void> installLinuxEnv() async {
-  if (!Platform.isLinux || !isGithubAction) return;
+  if (!Platform.isLinux) return;
 
   final result = await Process.run('which', ['appimagetool']);
   if (result.exitCode != 0) {
@@ -174,13 +174,19 @@ Future<void> installLinuxEnv() async {
   final appimageRuntime = File(APPIMAGE_RUNTIME_FILE);
   if (!await appimageRuntime.exists()) {
     printBlue('Downloading $APPIMAGE_RUNTIME_FILE...');
-    const url = 'https://github.com/AppImage/type2-runtime/releases/download/old/runtime-fuse3-x86_64';
-    final dl = await Process.run('wget', ['-O', APPIMAGE_RUNTIME_FILE, url]);
+    const url = 'https://github.com/AppImage/type2-runtime/releases/download/'
+        'old/runtime-fuse3-x86_64';
+    final dl = await Process.run(
+      'sudo',
+      ['wget', '-O', APPIMAGE_RUNTIME_FILE, url],
+    );
     if (dl.exitCode != 0) {
       print(dl.stderr);
       exit(1);
     }
   }
+
+  if (!isGithubAction) return;
 
   print('Installing dependencies...');
   final aptUpdate = await Process.run('sudo', ['apt', 'update']);
