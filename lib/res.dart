@@ -11,7 +11,10 @@ const APK_DIR = 'build/app/outputs/flutter-apk/';
 const XCODE_CFG_PATH = 'Runner.xcodeproj/project.pbxproj';
 const SHELL_SCRIPT_PATH = 'lib/data/model/app/shell_func.dart';
 
-const APPIMAGE_RUNTIME_FILE = '/usr/share/appimagetool/runtime-fuse3-x86_64';
+const APPIMAGE_DL_URL = 'https://cdn.lpkt.cn/misc/appimage/';
+const APPIMAGE_FILE = '/usr/bin/appimagetool';
+const APPIMAGE_RUNTIME_DIR = '/usr/share/appimagetool';
+const APPIMAGE_RUNTIME_FILE = '$APPIMAGE_RUNTIME_DIR/runtime-fuse3-x86_64';
 
 final REG_APPLE_VER = RegExp(r'CURRENT_PROJECT_VERSION = .+;');
 final REG_APPLE_MARKET_VER = RegExp(r'MARKETING_VERSION = .+');

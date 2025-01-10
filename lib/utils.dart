@@ -151,11 +151,10 @@ Future<void> installLinuxEnv() async {
   final result = await Process.run('which', ['appimagetool']);
   if (result.exitCode != 0) {
     printBlue('appimagetool is not installed. Installing...');
-    const url = 'https://github.com/AppImage/appimagetool/releases/download/'
-        'continuous/appimagetool-x86_64.AppImage';
+    const url = '$APPIMAGE_DL_URL/appimagetool-x86_64.AppImage';
     final dl = await Process.run(
       'sudo',
-      ['wget', '-O', '/usr/bin/appimagetool', url],
+      ['wget', '-O', APPIMAGE_FILE, url],
     );
     if (dl.exitCode != 0) {
       print(dl.stderr);
@@ -163,7 +162,7 @@ Future<void> installLinuxEnv() async {
     }
     final chmod = await Process.run(
       'sudo',
-      ['chmod', '755', '/usr/bin/appimagetool'],
+      ['chmod', '755', APPIMAGE_FILE],
     );
     if (chmod.exitCode != 0) {
       print(chmod.stderr);
@@ -174,8 +173,15 @@ Future<void> installLinuxEnv() async {
   final appimageRuntime = File(APPIMAGE_RUNTIME_FILE);
   if (!await appimageRuntime.exists()) {
     printBlue('Downloading $APPIMAGE_RUNTIME_FILE...');
-    const url = 'https://github.com/AppImage/type2-runtime/releases/download/'
-        'old/runtime-fuse3-x86_64';
+    const url = '$APPIMAGE_DL_URL/runtime-fuse3-x86_64';
+    final mkdir = await Process.run(
+      'sudo',
+      ['mkdir', '-p', APPIMAGE_RUNTIME_DIR]
+    );
+    if (mkdir.exitCode != 0) {
+      print(mkdir.stderr);
+      exit(1);
+    }
     final dl = await Process.run(
       'sudo',
       ['wget', '-O', APPIMAGE_RUNTIME_FILE, url],
