@@ -4,7 +4,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fl_build/config.dart';
+import 'package:fl_build/cfg/config.dart';
 import 'package:fl_build/make.dart';
 import 'package:fl_build/res.dart';
 import 'package:fl_build/scp.dart';

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fl_build/config.dart';
+import 'package:fl_build/cfg/config.dart';
 import 'package:fl_build/res.dart';
 import 'package:fl_build/target.dart';
 

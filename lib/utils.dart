@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fl_build/config.dart';
+import 'package:fl_build/cfg/config.dart';
 import 'package:fl_build/res.dart';
 
 extension IterX<T> on Iterable<T> {
