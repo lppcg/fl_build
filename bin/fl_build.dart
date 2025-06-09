@@ -45,7 +45,6 @@ void main(List<String> args) async {
     await updateBuildData(); // Put it at first
     await changePubVersion();
     await changeAppleVersion();
-    await dartFormat();
   }
 
   final forRelease = params.containsKey('-r');

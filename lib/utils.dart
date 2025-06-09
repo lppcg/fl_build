@@ -100,16 +100,6 @@ Future<void> changeAppleVersion() async {
   }
 }
 
-Future<void> dartFormat() async {
-  final result = await Process.run('dart', ['format', '.'],
-      runInShell: true); // runInShell required on Win to omit .bat ext
-  print(result.stdout);
-  if (result.exitCode != 0) {
-    print(result.stderr);
-    exit(1);
-  }
-}
-
 Future<void> setupLinuxDir() async {
   await Directory(LINUX_APP_DIR).create();
 

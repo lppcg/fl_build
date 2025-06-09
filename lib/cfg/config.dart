@@ -19,7 +19,7 @@ final buildDataVersion = () {
 }();
 
 @freezed
-class MakeCfg with _$MakeCfg {
+abstract class MakeCfg with _$MakeCfg {
   const factory MakeCfg({
     required String appName,
 
