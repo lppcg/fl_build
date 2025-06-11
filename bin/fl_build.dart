@@ -38,6 +38,17 @@ void main(List<String> args) async {
     exit(1);
   }
 
+  // Before build
+  final beforeBuild = makeCfg.beforeBuild;
+  if (beforeBuild != null) {
+    printBlue('Before build...');
+    final result = await Process.run('sh', ['-c', beforeBuild]);
+    if (result.exitCode != 0) {
+      print(result.stderr);
+      exit(1);
+    }
+  }
+
   // If [forRelease] is true, it will run all the preparation steps.
   final buildPreparation =
       params.containsKey('-bp') || params.containsKey('-r');
@@ -62,17 +73,6 @@ void main(List<String> args) async {
   if (platforms == null) {
     printRed('No platform specified. Exit.');
     return;
-  }
-
-  // Before build
-  final beforeBuild = makeCfg.beforeBuild;
-  if (beforeBuild != null) {
-    printBlue('Before build...');
-    final result = await Process.run('sh', ['-c', beforeBuild]);
-    if (result.exitCode != 0) {
-      print(result.stderr);
-      exit(1);
-    }
   }
 
   for (final platform in platforms) {
