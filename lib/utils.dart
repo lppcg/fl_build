@@ -191,7 +191,7 @@ Future<void> installLinuxEnv() async {
     // exit(1);
   }
   const deps = 'clang cmake ninja-build pkg-config libgtk-3-dev '
-      'libvulkan-dev desktop-file-utils';
+      'libvulkan-dev desktop-file-utils mesa-utils';
   final apts = await Process.run(
     'sudo',
     ['apt', 'install', '-y', ...deps.split(' ')],
