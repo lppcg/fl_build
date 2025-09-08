@@ -13,11 +13,20 @@ import 'package:fl_build/utils.dart';
 
 void main(List<String> args) async {
   final params = <String, String?>{};
-  for (var i = 0; i < args.length;) {
-    final arg = args[i];
+  List<String> passthroughArgs = [];
+  
+  // Find the -- separator to split args
+  final separatorIndex = args.indexOf('--');
+  final mainArgs = separatorIndex >= 0 ? args.take(separatorIndex).toList() : args;
+  if (separatorIndex >= 0) {
+    passthroughArgs = args.skip(separatorIndex + 1).toList();
+  }
+  
+  for (var i = 0; i < mainArgs.length;) {
+    final arg = mainArgs[i];
     if (arg.startsWith('-')) {
-      if (i + 1 < args.length && !args[i + 1].startsWith('-')) {
-        params[arg] = args[i + 1];
+      if (i + 1 < mainArgs.length && !mainArgs[i + 1].startsWith('-')) {
+        params[arg] = mainArgs[i + 1];
         i += 2;
       } else {
         params[arg] = null;
@@ -77,7 +86,7 @@ void main(List<String> args) async {
 
   for (final platform in platforms) {
     final target = Target.fromString(platform);
-    final res = await Maker.run(target);
+    final res = await Maker.run(target, passthroughArgs: passthroughArgs);
     if (res == null) continue;
     for (final path in res.pkgPath) {
       if (scp) await Scps.run(target, path);

@@ -12,18 +12,18 @@ final class MakeResult {
 }
 
 abstract final class Maker {
-  static Future<MakeResult?> run(Target target) async {
+  static Future<MakeResult?> run(Target target, {List<String> passthroughArgs = const []}) async {
     switch (target) {
       case Target.android:
-        return await flutterBuildAndroid();
+        return await flutterBuildAndroid(passthroughArgs: passthroughArgs);
       case Target.ios:
-        return await flutterBuildIOS();
+        return await flutterBuildIOS(passthroughArgs: passthroughArgs);
       case Target.mac:
-        return await flutterBuildMacOS();
+        return await flutterBuildMacOS(passthroughArgs: passthroughArgs);
       case Target.win:
-        return await flutterBuildWin();
+        return await flutterBuildWin(passthroughArgs: passthroughArgs);
       case Target.linux:
-        return await flutterBuildLinux();
+        return await flutterBuildLinux(passthroughArgs: passthroughArgs);
       default:
         throw ArgumentError('Unsupported target: $target');
     }
@@ -32,6 +32,7 @@ abstract final class Maker {
   static Future<void> _flutterBuild(
     String buildType, {
     List<String>? customArgs,
+    List<String> passthroughArgs = const [],
   }) async {
     final setup = makeCfg.platformSetup.entries
         .firstWhereOrNull((e) => e.key == buildType)
@@ -55,6 +56,7 @@ abstract final class Maker {
       '--build-name=1.0.$buildDataVersion',
       if (customArgs != null) ...customArgs,
       if (makeCfgArgs != null) ...makeCfgArgs,
+      ...passthroughArgs,
     ];
 
     print('\n[$buildType]\nflutter ${args.join(' ')}');
@@ -68,18 +70,18 @@ abstract final class Maker {
     }
   }
 
-  static Future<MakeResult?> flutterBuildIOS() async {
-    await _flutterBuild('ipa');
+  static Future<MakeResult?> flutterBuildIOS({List<String> passthroughArgs = const []}) async {
+    await _flutterBuild('ipa', passthroughArgs: passthroughArgs);
     return null;
   }
 
-  static Future<MakeResult?> flutterBuildMacOS() async {
-    await _flutterBuild('macos');
+  static Future<MakeResult?> flutterBuildMacOS({List<String> passthroughArgs = const []}) async {
+    await _flutterBuild('macos', passthroughArgs: passthroughArgs);
     return null;
   }
 
-  static Future<MakeResult?> flutterBuildAndroid() async {
-    await _flutterBuild('apk', customArgs: ['--split-per-abi']);
+  static Future<MakeResult?> flutterBuildAndroid({List<String> passthroughArgs = const []}) async {
+    await _flutterBuild('apk', customArgs: ['--split-per-abi'], passthroughArgs: passthroughArgs);
 
     // {originName: newName}
     final namesMap = {
@@ -100,10 +102,10 @@ abstract final class Maker {
     );
   }
 
-  static Future<MakeResult?> flutterBuildLinux() async {
+  static Future<MakeResult?> flutterBuildLinux({List<String> passthroughArgs = const []}) async {
     await installLinuxEnv();
     await setupLinuxDir();
-    await _flutterBuild('linux');
+    await _flutterBuild('linux', passthroughArgs: passthroughArgs);
     // cp -r build/linux/x64/release/bundle/* appName.AppDir
     await Process.run('cp', [
       '-r',
@@ -131,8 +133,8 @@ abstract final class Maker {
     return MakeResult(pkgPath: [pkgPath]);
   }
 
-  static Future<MakeResult?> flutterBuildWin() async {
-    await _flutterBuild('windows');
+  static Future<MakeResult?> flutterBuildWin({List<String> passthroughArgs = const []}) async {
+    await _flutterBuild('windows', passthroughArgs: passthroughArgs);
 
     final pkgPath = '${appName}_${buildDataVersion}_windows_amd64.zip';
     final buildPath = 'build\\windows\\x64\\runner\\Release\\*';
