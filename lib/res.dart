@@ -11,7 +11,8 @@ const APK_DIR = 'build/app/outputs/flutter-apk/';
 const XCODE_CFG_PATH = 'Runner.xcodeproj/project.pbxproj';
 const SHELL_SCRIPT_PATH = 'lib/data/model/app/shell_func.dart';
 
-/// Upstream, rather than the mirror on `cdn.lpkt.cn` these used to come from.
+/// Upstream, rather than the mirror on `cdn.lollipopkit.com` these used to
+/// come from.
 ///
 /// A release build fetching its packaging tools from a host with no published
 /// provenance is a link nobody outside the project can check. Both files are
