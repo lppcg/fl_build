@@ -12,7 +12,10 @@ final class MakeResult {
 }
 
 abstract final class Maker {
-  static Future<MakeResult?> run(Target target, {List<String> passthroughArgs = const []}) async {
+  static Future<MakeResult?> run(
+    Target target, {
+    List<String> passthroughArgs = const [],
+  }) async {
     switch (target) {
       case Target.android:
         return await flutterBuildAndroid(passthroughArgs: passthroughArgs);
@@ -70,24 +73,35 @@ abstract final class Maker {
     }
   }
 
-  static Future<MakeResult?> flutterBuildIOS({List<String> passthroughArgs = const []}) async {
+  static Future<MakeResult?> flutterBuildIOS({
+    List<String> passthroughArgs = const [],
+  }) async {
     await _flutterBuild('ipa', passthroughArgs: passthroughArgs);
     return null;
   }
 
-  static Future<MakeResult?> flutterBuildMacOS({List<String> passthroughArgs = const []}) async {
+  static Future<MakeResult?> flutterBuildMacOS({
+    List<String> passthroughArgs = const [],
+  }) async {
     await _flutterBuild('macos', passthroughArgs: passthroughArgs);
     return null;
   }
 
-  static Future<MakeResult?> flutterBuildAndroid({List<String> passthroughArgs = const []}) async {
+  static Future<MakeResult?> flutterBuildAndroid({
+    List<String> passthroughArgs = const [],
+  }) async {
     final apkDir = Directory(APK_DIR);
     if (await apkDir.exists()) {
       await for (final entity in apkDir.list()) {
-        if (entity is File && entity.path.endsWith('.apk')) await entity.delete();
+        if (entity is File && entity.path.endsWith('.apk'))
+          await entity.delete();
       }
     }
-    await _flutterBuild('apk', customArgs: ['--split-per-abi'], passthroughArgs: passthroughArgs);
+    await _flutterBuild(
+      'apk',
+      customArgs: ['--split-per-abi'],
+      passthroughArgs: passthroughArgs,
+    );
 
     final abiNames = {
       'arm64-v8a': '${appName}_${buildDataVersion}_arm64.apk',
@@ -116,8 +130,11 @@ abstract final class Maker {
     return MakeResult(pkgPath: pkgPaths);
   }
 
-  static Future<MakeResult?> flutterBuildLinux({List<String> passthroughArgs = const []}) async {
-    if (!Platform.isLinux) throw UnsupportedError('Linux builds require a Linux host.');
+  static Future<MakeResult?> flutterBuildLinux({
+    List<String> passthroughArgs = const [],
+  }) async {
+    if (!Platform.isLinux)
+      throw UnsupportedError('Linux builds require a Linux host.');
     await installLinuxEnv();
     await setupLinuxDir();
     await _flutterBuild('linux', passthroughArgs: passthroughArgs);
@@ -142,12 +159,7 @@ abstract final class Maker {
     final pkgPath = '${appName}_${buildDataVersion}_amd64.AppImage';
     final appimg = await Process.run(
       'appimagetool',
-      [
-        LINUX_APP_DIR,
-        pkgPath,
-        '--runtime-file',
-        APPIMAGE_RUNTIME_FILE,
-      ],
+      [LINUX_APP_DIR, pkgPath, '--runtime-file', APPIMAGE_RUNTIME_FILE],
       environment: {...Platform.environment, 'ARCH': 'x86_64'},
     );
     if (appimg.exitCode != 0) {
@@ -159,7 +171,9 @@ abstract final class Maker {
     return MakeResult(pkgPath: [pkgPath]);
   }
 
-  static Future<MakeResult?> flutterBuildWin({List<String> passthroughArgs = const []}) async {
+  static Future<MakeResult?> flutterBuildWin({
+    List<String> passthroughArgs = const [],
+  }) async {
     await _flutterBuild('windows', passthroughArgs: passthroughArgs);
 
     final pkgPath = '${appName}_${buildDataVersion}_windows_amd64.zip';
@@ -169,7 +183,12 @@ abstract final class Maker {
     //print("Creating zip archive to $pkgPath ...");
 
     final result = await Process.run('powershell', [
-      'Compress-Archive',
+      '-NoProfile',
+      '-NonInteractive',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-Command',
+      'Import-Module Microsoft.PowerShell.Archive; Compress-Archive',
       '-Path',
       buildPath,
       '-DestinationPath',
